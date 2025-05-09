@@ -191,6 +191,54 @@ class AnnotationEditor {
     this.deleted = false;
   }
 
+  get debugState() {
+    return {
+      // === Public/conventional fields ===
+      pageIndex: this.pageIndex,
+      name: this.name,
+      deleted: this.deleted,
+      color: this.color,
+      height: this.height,
+      width: this.width,
+      x: this.x,
+      y: this.y,
+
+      // === Private fields ===
+      accessibilityData: this.#accessibilityData,
+      allResizerDivs: this.#allResizerDivs,
+      altText: this.#altText,
+      disabled: this.#disabled,
+      dragPointerId: this.#dragPointerId,
+      dragPointerType: this.#dragPointerType,
+      keepAspectRatio: this.#keepAspectRatio,
+      resizersDiv: this.#resizersDiv,
+      lastPointerCoords: this.#lastPointerCoords,
+      savedDimensions: this.#savedDimensions,
+      focusAC: this.#focusAC,
+      focusedResizerName: this.#focusedResizerName,
+      hasBeenClicked: this.#hasBeenClicked,
+      initialRect: this.#initialRect,
+      isEditing: this.#isEditing,
+      isInEditMode: this.#isInEditMode,
+      isResizerEnabledForKeyboard: this.#isResizerEnabledForKeyboard,
+      moveInDOMTimeout: this.#moveInDOMTimeout,
+      prevDragX: this.#prevDragX,
+      prevDragY: this.#prevDragY,
+      telemetryTimeouts: this.#telemetryTimeouts,
+      touchManager: this.#touchManager,
+      isDraggable: this.#isDraggable,
+      zIndex: this.#zIndex,
+
+      // === Internal UI-related fields ===
+      editToolbar: this._editToolbar,
+      initialOptions: this._initialOptions,
+      initialData: this._initialData,
+      isVisible: this._isVisible,
+      uiManager: this._uiManager,
+      focusEventsAllowed: this._focusEventsAllowed,
+    };
+  }
+
   get editorType() {
     return Object.getPrototypeOf(this).constructor._type;
   }
@@ -249,7 +297,7 @@ class AnnotationEditor {
    * @param {number} _type
    * @param {*} _value
    */
-  static updateDefaultParams(_type, _value) {}
+  static updateDefaultParams(_type, _value) { }
 
   /**
    * Get the default properties to set in the UI for this type of editor.
@@ -522,14 +570,14 @@ class AnnotationEditor {
    * @param {number} x - in page coordinates.
    * @param {number} y - in page coordinates.
    */
-  _onTranslating(x, y) {}
+  _onTranslating(x, y) { }
 
   /**
    * Called when the editor has been translated.
    * @param {number} x - in page coordinates.
    * @param {number} y - in page coordinates.
    */
-  _onTranslated(x, y) {}
+  _onTranslated(x, y) { }
 
   get _hasBeenMoved() {
     return (
@@ -743,15 +791,15 @@ class AnnotationEditor {
     const classes = this._willKeepAspectRatio
       ? ["topLeft", "topRight", "bottomRight", "bottomLeft"]
       : [
-          "topLeft",
-          "topMiddle",
-          "topRight",
-          "middleRight",
-          "bottomRight",
-          "bottomMiddle",
-          "bottomLeft",
-          "middleLeft",
-        ];
+        "topLeft",
+        "topMiddle",
+        "topRight",
+        "middleRight",
+        "bottomRight",
+        "bottomMiddle",
+        "bottomLeft",
+        "middleLeft",
+      ];
     const signal = this._uiManager._signal;
     for (const name of classes) {
       const div = document.createElement("div");
@@ -838,7 +886,7 @@ class AnnotationEditor {
   /**
    * Called when the editor has been resized.
    */
-  _onResized() {}
+  _onResized() { }
 
   #addResizeToUndoStack() {
     if (!this.#savedDimensions) {
@@ -1017,7 +1065,7 @@ class AnnotationEditor {
   /**
    * Called when the editor is being resized.
    */
-  _onResizing() {}
+  _onResizing() { }
 
   /**
    * Called when the alt text dialog is closed.
@@ -1358,9 +1406,9 @@ class AnnotationEditor {
     window.addEventListener("blur", pointerUpCallback, { signal });
   }
 
-  _onStartDragging() {}
+  _onStartDragging() { }
 
-  _onStopDragging() {}
+  _onStopDragging() { }
 
   moveInDOM() {
     // Moving the editor in the DOM can be expensive, so we wait a bit before.
@@ -1463,7 +1511,7 @@ class AnnotationEditor {
    * Executed once this editor has been rendered.
    * @param {boolean} focus - true if the editor should be focused.
    */
-  onceAdded(focus) {}
+  onceAdded(focus) { }
 
   /**
    * Check if the editor contains something.
@@ -1542,12 +1590,12 @@ class AnnotationEditor {
    * Rotate the editor when the page is rotated.
    * @param {number} angle
    */
-  rotate(_angle) {}
+  rotate(_angle) { }
 
   /**
    * Resize the editor when the page is resized.
    */
-  resize() {}
+  resize() { }
 
   /**
    * Serialize the editor when it has been deleted.
@@ -1847,24 +1895,24 @@ class AnnotationEditor {
    * @param {number} type
    * @param {*} value
    */
-  updateParams(type, value) {}
+  updateParams(type, value) { }
 
   /**
    * When the user disables the editing mode some editors can change some of
    * their properties.
    */
-  disableEditing() {}
+  disableEditing() { }
 
   /**
    * When the user enables the editing mode some editors can change some of
    * their properties.
    */
-  enableEditing() {}
+  enableEditing() { }
 
   /**
    * The editor is about to be edited.
    */
-  enterInEditMode() {}
+  enterInEditMode() { }
 
   /**
    * @returns {HTMLElement | null} the element requiring an alt text.

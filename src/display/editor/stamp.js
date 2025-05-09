@@ -58,6 +58,33 @@ class StampEditor extends AnnotationEditor {
     this.#bitmapFile = params.bitmapFile;
   }
 
+  get debugState() {
+    return {
+      // === Public/conventional fields from AnnotationEditor ===
+      pageIndex: this.pageIndex,
+      name: this.name,
+      deleted: this.deleted,
+      color: this.color,
+      height: this.height,
+      width: this.width,
+      x: this.x,
+      y: this.y,
+
+      // === StampEditor private instance fields ===
+      bitmap: this.#bitmap,
+      bitmapId: this.#bitmapId,
+      bitmapPromise: this.#bitmapPromise,
+      bitmapUrl: this.#bitmapUrl,
+      bitmapFile: this.#bitmapFile,
+      bitmapFileName: this.#bitmapFileName,
+      canvas: this.#canvas,
+      missingCanvas: this.#missingCanvas,
+      resizeTimeoutId: this.#resizeTimeoutId,
+      isSvg: this.#isSvg,
+      hasBeenAddedInUndoStack: this.#hasBeenAddedInUndoStack,
+    };
+  }
+
   /** @inheritdoc */
   static initialize(l10n, uiManager) {
     AnnotationEditor.initialize(l10n, uiManager);
@@ -169,7 +196,7 @@ class StampEditor extends AnnotationEditor {
         // The alt-text dialog isn't opened but we still want to guess the alt
         // text.
         this.mlGuessAltText();
-      } catch {}
+      } catch { }
     }
 
     this.div.focus();
@@ -908,7 +935,7 @@ class StampEditor extends AnnotationEditor {
     context.stamps ||= new Map();
     const area = this.#isSvg
       ? (serialized.rect[2] - serialized.rect[0]) *
-        (serialized.rect[3] - serialized.rect[1])
+      (serialized.rect[3] - serialized.rect[1])
       : null;
     if (!context.stamps.has(this.#bitmapId)) {
       // We don't want to have multiple copies of the same bitmap in the

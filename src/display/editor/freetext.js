@@ -137,6 +137,27 @@ class FreeTextEditor extends AnnotationEditor {
     this.#fontSize = params.fontSize || FreeTextEditor._defaultFontSize;
   }
 
+  get debugState() {
+    return {
+      // === AnnotationEditor public/conventional fields ===
+      pageIndex: this.pageIndex,
+      name: this.name,
+      deleted: this.deleted,
+      color: this.color,
+      height: this.height,
+      width: this.width,
+      x: this.x,
+      y: this.y,
+
+      // === FreeTextEditor private fields ===
+      colorInternal: this.#color,
+      content: this.#content,
+      editorDivId: this.#editorDivId,
+      editModeAC: this.#editModeAC,
+      fontSize: this.#fontSize,
+    };
+  }
+
   /** @inheritdoc */
   static initialize(l10n, uiManager) {
     AnnotationEditor.initialize(l10n, uiManager);

@@ -109,6 +109,134 @@ class WebServer {
   }
 
   async #checkRequest(request, response, url) {
+    if (url.searchParams.has("annotations")) {
+      response.setHeader("Content-Type", "text/html");
+      response.writeHead(200);
+      response.end(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Annotations</title>
+          <style>
+            body {
+              font-family: sans-serif;
+              padding: 1rem;
+            }
+            .json-container {
+              font-family: monospace;
+              font-size: 14px;
+            }
+            .key { color: brown; }
+            .string { color: green; }
+            .number { color: blue; }
+            .boolean { color: red; }
+            .null { color: gray; }
+            .collapsible {
+              cursor: pointer;
+              user-select: none;
+            }
+            .nested {
+              margin-left: 1.5em;
+              display: none;
+            }
+            .expanded > .nested {
+              display: block;
+            }
+          </style>
+        </head>
+        <body>
+          <h2>Live Annotations</h2>
+          <div id="json" class="json-container">Waiting for PDF...</div>
+    
+          <script>
+            function safeStringify(obj) {
+              const seen = new WeakSet();
+              return JSON.stringify(obj, function (key, value) {
+                if (typeof value === "object" && value !== null) {
+                  if (seen.has(value)) return "[Circular]";
+                  seen.add(value);
+                }
+                if (typeof value === "function") return "[Function]";
+                return value;
+              }, 2);
+            }
+    
+            function createNode(key, value) {
+              const type = typeof value;
+              const div = document.createElement("div");
+    
+              if (value && typeof value === "object") {
+                const isArray = Array.isArray(value);
+                const label = document.createElement("span");
+                label.className = "collapsible";
+                label.textContent = key + ": " + (isArray ? "[...]" : "{...}");
+                label.onclick = () => div.classList.toggle("expanded");
+    
+                const nested = document.createElement("div");
+                nested.className = "nested";
+    
+                for (let k in value) {
+                  nested.appendChild(createNode(k, value[k]));
+                }
+    
+                div.appendChild(label);
+                div.appendChild(nested);
+              } else {
+                div.innerHTML = \`<span class="key">\${key}</span>: <span class="\${type}">\${JSON.stringify(value)}</span>\`;
+              }
+    
+              return div;
+            }
+    
+            function renderJson(rawData) {
+              const container = document.getElementById("json");
+              container.innerHTML = "";
+    
+              let obj;
+              try {
+                obj = JSON.parse(safeStringify(rawData));
+              } catch (e) {
+                container.textContent = "Error parsing annotation data: " + e.message;
+                return;
+              }
+    
+              for (let k in obj) {
+                container.appendChild(createNode(k, obj[k]));
+              }
+            }
+    
+            function bindStorageListener() {
+              try {
+                const pdfApp = parent.frames["pdf"].PDFViewerApplication;
+                const storage = pdfApp?.pdfDocument?.annotationStorage;
+    
+                if (!storage || typeof storage.getAll !== "function") {
+                  setTimeout(bindStorageListener, 500);
+                  return;
+                }
+    
+                renderJson(storage.debugState);
+    
+                // ✅ Register listener
+                storage.onStorageChanged = (updated) => {
+                  console.log("Annotation storage changed:", updated);
+                  renderJson(updated.debugState);
+                };
+              } catch (e) {
+                document.getElementById("json").textContent = "Error: " + e.message;
+                setTimeout(bindStorageListener, 500);
+              }
+            }
+    
+            bindStorageListener();
+          </script>
+        </body>
+        </html>
+      `);
+      return;
+    }
+
     const localURL = new URL(`.${url.pathname}`, this.rootURL);
 
     // Check if the file/folder exists.
@@ -197,11 +325,20 @@ class WebServer {
     response.writeHead(200);
 
     if (url.searchParams.has("frame")) {
+      const annotationsURL = new URL(url);
+      annotationsURL.searchParams.delete("frame");
+      annotationsURL.searchParams.set("annotations", "");
+
+      const sideURL = new URL(url);
+      sideURL.searchParams.delete("frame");
+      sideURL.searchParams.set("side", "");
+
       response.end(
         `<html>
-          <frameset cols=*,200>
-            <frame name=pdf>
-            <frame src="${url.pathname}?side">
+          <frameset cols="*,300,200">
+            <frame name="pdf">
+            <frame src="${annotationsURL.pathname + annotationsURL.search}" name="annotations">
+            <frame src="${sideURL.pathname + sideURL.search}" name="side">
           </frameset>
         </html>`,
         "utf8"

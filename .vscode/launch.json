@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Launch Gulp Server",
+        "type": "node",
+        "request": "launch",
+        "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
+        "args": ["server"],
+        "cwd": "${workspaceFolder}",
+        "console": "integratedTerminal"
+      },
+      {
+        "name": "Chrome Debug",
+        "type": "pwa-chrome",
+        "request": "launch",
+        "url": "http://localhost:8888",  // adjust to your gulp server's port
+        "webRoot": "${workspaceFolder}"
+      }
+    ]
+  }
+  

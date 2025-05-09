@@ -97,6 +97,39 @@ class DrawingEditor extends AnnotationEditor {
     }
   }
 
+  get debugState() {
+    return {
+      // === Public/conventional fields from AnnotationEditor ===
+      pageIndex: this.pageIndex,
+      name: this.name,
+      deleted: this.deleted,
+      color: this.color,
+      height: this.height,
+      width: this.width,
+      x: this.x,
+      y: this.y,
+
+      // === DrawingEditor private instance fields ===
+      drawOutlines: this.#drawOutlines,
+      mustBeCommitted: this.#mustBeCommitted,
+
+      // === DrawingEditor public fields ===
+      drawId: this._drawId,
+
+      // === DrawingEditor static fields (optional for debugging shared state) ===
+      static_currentDrawId: DrawingEditor._currentDrawId,
+      static_currentParent: DrawingEditor._currentParent,
+      static_currentDraw: DrawingEditor.#currentDraw,
+      static_currentDrawingAC: DrawingEditor.#currentDrawingAC,
+      static_currentDrawingOptions: DrawingEditor.#currentDrawingOptions,
+      static_currentPointerId: DrawingEditor.#currentPointerId,
+      static_currentPointerType: DrawingEditor.#currentPointerType,
+      static_currentPointerIds: DrawingEditor.#currentPointerIds,
+      static_currentMoveTimestamp: DrawingEditor.#currentMoveTimestamp,
+      static_INNER_MARGIN: DrawingEditor._INNER_MARGIN,
+    };
+  }
+
   #createDrawOutlines({ drawOutlines, drawId, drawingOptions }) {
     this.#drawOutlines = drawOutlines;
     this._drawingOptions ||= drawingOptions;
@@ -614,7 +647,7 @@ class DrawingEditor extends AnnotationEditor {
     );
   }
 
-  static onScaleChangingWhenDrawing() {}
+  static onScaleChangingWhenDrawing() { }
 
   /** @inheritdoc */
   render() {
@@ -906,7 +939,7 @@ class DrawingEditor extends AnnotationEditor {
    * Create the drawing options.
    * @param {Object} _data
    */
-  createDrawingOptions(_data) {}
+  createDrawingOptions(_data) { }
 
   /**
    * Deserialize the drawing outlines.

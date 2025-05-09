@@ -146,6 +146,48 @@ class HighlightEditor extends AnnotationEditor {
     };
   }
 
+  get debugState() {
+    return {
+      // === AnnotationEditor public/conventional fields ===
+      editToolbar: this._editToolbar,
+      initialOptions: this._initialOptions,
+      initialData: this._initialData,
+      isVisible: this._isVisible,
+      uiManager: this._uiManager,
+      focusEventsAllowed: this._focusEventsAllowed,
+
+      // === HighlightEditor private fields ===
+      anchorNode: this.#anchorNode,
+      anchorOffset: this.#anchorOffset,
+      boxes: this.#boxes,
+      clipPathId: this.#clipPathId,
+      colorPicker: this.#colorPicker,
+      focusOutlines: this.#focusOutlines,
+      focusNode: this.#focusNode,
+      focusOffset: this.#focusOffset,
+      highlightDiv: this.#highlightDiv,
+      highlightOutlines: this.#highlightOutlines,
+      id: this.#id,
+      isFreeHighlight: this.#isFreeHighlight,
+      lastPoint: this.#lastPoint,
+      opacity: this.#opacity,
+      outlineId: this.#outlineId,
+      text: this.#text,
+      thickness: this.#thickness,
+      methodOfCreation: this.#methodOfCreation,
+
+      // === HighlightEditor public/conventional fields ===
+      pageIndex: this.pageIndex,
+      name: this.name,
+      deleted: this.deleted,
+      color: this.color,
+      height: this.height,
+      width: this.width,
+      x: this.x,
+      y: this.y,
+    };
+  }
+
   static computeTelemetryFinalData(data) {
     // We want to know how many colors have been used.
     return { numberOfColors: data.get("color").size };
@@ -283,7 +325,7 @@ class HighlightEditor extends AnnotationEditor {
   }
 
   /** @inheritdoc */
-  translateInPage(x, y) {}
+  translateInPage(x, y) { }
 
   /** @inheritdoc */
   get toolbarPosition() {

@@ -41,6 +41,8 @@ class AnnotationStorage {
     this.onSetModified = null;
     this.onResetModified = null;
     this.onAnnotationEditor = null;
+
+    this.onStorageChanged = null;
   }
 
   /**
@@ -78,6 +80,10 @@ class AnnotationStorage {
       this.resetModified();
     }
 
+    if (typeof this.onStorageChanged === "function") {
+      this.onStorageChanged(this);
+    }
+
     if (typeof this.onAnnotationEditor === "function") {
       for (const value of this.#storage.values()) {
         if (value instanceof AnnotationEditor) {
@@ -109,6 +115,9 @@ class AnnotationStorage {
     }
     if (modified) {
       this.#setModified();
+      if (typeof this.onStorageChanged === "function") {
+        this.onStorageChanged(this);
+      }
     }
 
     if (
@@ -141,6 +150,10 @@ class AnnotationStorage {
   setAll(obj) {
     for (const [key, val] of Object.entries(obj)) {
       this.setValue(key, val);
+    }
+
+    if (typeof this.onStorageChanged === "function") {
+      this.onStorageChanged(this);
     }
   }
 
@@ -277,6 +290,16 @@ class AnnotationStorage {
       ids: new Set(ids),
       hash: ids.join(","),
     });
+  }
+
+  get debugState() {
+    const obj = Object.create(null);
+    for (const [key, value] of this.#storage) {
+      obj[key] = value instanceof AnnotationEditor && typeof value.debugState === "object"
+        ? value.debugState
+        : value;
+    }
+    return obj;
   }
 }
 
